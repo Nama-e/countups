@@ -8,12 +8,27 @@ function sendFinalTimeToChat() {
             const oauthToken = data.oauth_token;
             console.log(`OAuth Token: ${oauthToken}`); // Log the OAuth token
             const channelName = 'LatteMeowCatto'; // Replace with your Twitch channel name
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", `https://api.twitch.tv/kraken/channels/${channelName}/chat`, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("Authorization", `OAuth ${oauthToken}`);
-            xhr.send(JSON.stringify({ "content": `Final procrastination time: ${finalTime}` }));
-            console.log('Message sent to chat:', `Final procrastination time: ${finalTime}`); // Log when message is sent
+            const message = `Final procrastination time: ${finalTime}`;
+            const url = `https://api.twitch.tv/kraken/chat/${channelName}/messages`;
+            const headers = {
+                'Authorization': `OAuth ${oauthToken}`,
+                'Client-ID': 'your_client_id' // Replace with your Twitch app client ID
+            };
+            const body = { 'message': message };
+
+            fetch(url, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Message sent to chat:', message);
+                } else {
+                    console.error('Failed to send message to chat:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Error sending message to chat:', error));
         })
         .catch(error => console.error('Error reading token:', error));
 }
