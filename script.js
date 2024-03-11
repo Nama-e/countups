@@ -1,66 +1,60 @@
-// Function to send final time to chat
-function sendFinalTimeToChat() {
-    const finalTime = formatTime(procrastinationTime);
-    // Read OAuth token from token.json
-    fetch('token.json')
-        .then(response => response.json())
-        .then(data => {
-            const oauthToken = data.oauth_token;
-            console.log(`OAuth Token: ${oauthToken}`); // Log the OAuth token
-            const channelName = 'LatteMeowCatto'; // Replace with your Twitch channel name
-            const message = `Final procrastination time: ${finalTime}`;
-            const url = `https://api.twitch.tv/kraken/chat/${channelName}/messages`;
-            const headers = {
-                'Authorization': `OAuth ${oauthToken}`,
-                'Client-ID': 'your_client_id' // Replace with your Twitch app client ID
-            };
-            const body = { 'message': message };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+        body { background-color: #00ff00; }
+        .stopwatch {
+            position: fixed;
+            font-size: 48px;
+            font-family: 'Kdam Thmor Pro';
+            color: white;
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch"></div>
+    <script>
+        const initialStartTime = Date.now(); // Initial start time
+        let elapsedTime = 0; // Elapsed time when paused
+        let timerInterval; // Interval ID for the timer
 
-            fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Message sent to chat:', message);
-                } else {
-                    console.error('Failed to send message to chat:', response.statusText);
-                }
-            })
-            .catch(error => console.error('Error sending message to chat:', error));
-        })
-        .catch(error => console.error('Error reading token:', error));
-}
+        // Function to update the timer display
+        function updateTimer() {
+            const currentTime = Date.now();
+            const totalTime = currentTime - initialStartTime + elapsedTime;
 
-// Send final time to chat when the page is about to unload
-window.onbeforeunload = function() {
-    console.log('Sending final time to chat...'); // Log when sending final time to chat
-    sendFinalTimeToChat();
-};
+            let hours = Math.floor(totalTime / (1000 * 60 * 60));
+            let minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
 
-// Function to update the procrastination timer every second
-function updateProcrastinationTimer() {
-    procrastinationTime++;
-    updateCounter();
-}
+            // Add leading zeros if necessary
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-// Function to update the counter every second
-function updateCounter() {
-    const counterElement = document.querySelector('.counter');
-    counterElement.innerText = `Procrastination Time: ${formatTime(procrastinationTime)}`;
-}
+            // Display the time
+            document.querySelector('.stopwatch').innerText = `${hours}:${minutes}:${seconds}`;
+        }
 
-// Function to format time to HH:MM:SS
-function formatTime(time) {
-    let hours = Math.floor(time / 3600);
-    let minutes = Math.floor((time % 3600) / 60);
-    let seconds = time % 60;
-    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-}
+        // Start the timer
+        timerInterval = setInterval(updateTimer, 1000);
 
-// Call the updateCounter function to display the initial counter value
-updateCounter();
+        // Event listener for when the browser goes offline
+        window.addEventListener('offline', () => {
+            clearInterval(timerInterval); // Stop the timer
+            elapsedTime = Date.now() - initialStartTime; // Save the elapsed time
+        });
 
-// Call the updateProcrastinationTimer function to start the timer
-setInterval(updateProcrastinationTimer, 1000);
+        // Event listener for when the browser comes back online
+        window.addEventListener('online', () => {
+            initialStartTime = Date.now(); // Reset the initial start time
+            timerInterval = setInterval(updateTimer, 1000); // Restart the timer
+        });
+    </script>
+</body>
+</html>
