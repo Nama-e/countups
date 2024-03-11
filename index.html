@@ -10,8 +10,24 @@
         body { 
             background-color: #00ff00; 
             font-family: 'Kdam Thmor Pro';
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
         
+        .counter-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .counter-label {
+            font-size: 24px;
+            color: white;
+            margin-right: 10px;
+        }
+
         .counter {
             font-size: 48px;
             color: white;
@@ -20,8 +36,10 @@
     </style>
 </head>
 <body>
-    <div class="counter">Procrastination Time: 00:00:00</div>
-    <div id="timer"></div>
+    <div class="counter-container">
+        <div class="counter-label">Procrastination Time:</div>
+        <div class="counter">00:00:00</div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
