@@ -23,13 +23,19 @@ function formatTime(time) {
 // Function to send final time to chat
 function sendFinalTimeToChat() {
     const finalTime = formatTime(procrastinationTime);
-    // Replace 'your_channel_name' with your Twitch channel name
-    // Replace 'your_oauth_token' with your Twitch Chat OAuth token
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://api.twitch.tv/kraken/channels/your_channel_name/chat`, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", "OAuth your_oauth_token");
-    xhr.send(JSON.stringify({ "content": `Final procrastination time: ${finalTime}` }));
+    // Read OAuth token from token.json
+    fetch('token.json')
+        .then(response => response.json())
+        .then(data => {
+            const oauthToken = data.oauth_token;
+            const channelName = 'LatteMeowCatto'; // Replace with your Twitch channel name
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", `https://api.twitch.tv/kraken/channels/${channelName}/chat`, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("Authorization", `OAuth ${oauthToken}`);
+            xhr.send(JSON.stringify({ "content": `Final procrastination time: ${finalTime}` }));
+        })
+        .catch(error => console.error('Error reading token:', error));
 }
 
 // Call the updateCounter function to display the initial counter value
