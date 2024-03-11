@@ -14,4 +14,4 @@ function startCounter() {
 }
 
 // Call the startCounter function when the page loads
-window.onload = startCounter;
+document.addEventListener("DOMContentLoaded", startCounter);
