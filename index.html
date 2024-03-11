@@ -3,13 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Counter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+
+        body { background-color: #00ff00; }
+        
+        .counter {
+            position: fixed;
+            font-size: 48px;
+            font-family: 'Kdam Thmor Pro';
+            color: white;
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
 </head>
 <body>
-    <div id="counter">0</div>
+    <div class="counter"></div>
+    <script>
+        let count = 0;
+        let intervalId; // Variable to store the interval ID
 
-    <!-- Include the JavaScript file for counter functionality -->
-    <script src="script.js"></script>
+        // Function to update the counter every second
+        function updateCounter() {
+            count++;
+            document.querySelector('.counter').innerText = formatTime(count);
+        }
+
+        // Function to start the counter
+        function startCounter() {
+            intervalId = setInterval(updateCounter, 1000);
+        }
+
+        // Format time to HH:MM:SS
+        function formatTime(time) {
+            let hours = Math.floor(time / 3600);
+            let minutes = Math.floor((time % 3600) / 60);
+            let seconds = time % 60;
+            return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+
+        // Call the startCounter function when the page loads
+        document.addEventListener("DOMContentLoaded", startCounter);
+    </script>
 </body>
 </html>
