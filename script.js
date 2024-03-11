@@ -1,6 +1,5 @@
 // Function to send final time to chat
 function sendFinalTimeToChat() {
-    console.log('Preparing to send final time to chat...'); // Log before sending final time
     const finalTime = formatTime(procrastinationTime);
     // Read OAuth token from token.json
     fetch('token.json')
@@ -21,7 +20,7 @@ function sendFinalTimeToChat() {
 
 // Send final time to chat when the page is about to unload
 window.onbeforeunload = function() {
-    console.log('Page is unloading. Sending final time to chat...'); // Log when sending final time to chat
+    console.log('Sending final time to chat...'); // Log when sending final time to chat
     sendFinalTimeToChat();
 };
 
