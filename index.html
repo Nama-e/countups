@@ -20,15 +20,15 @@
     <div class="stopwatch"></div>
     <script>
         let start = Date.now();
-        let elapsedTime = 0; // Variable to store elapsed time
+        let elapsedTime = localStorage.getItem('elapsedTime') ? parseInt(localStorage.getItem('elapsedTime')) : 0; // Get elapsed time from local storage or default to 0
         let timerInterval; // Variable to store the interval ID
 
         // Function to update the timer display
         function updateTimer() {
             const timeInMilliseconds = Date.now() - start + elapsedTime;
             let h = Math.floor(timeInMilliseconds / 1000 / 60 / 60);
-            let m = Math.floor((timeInMilliseconds / 1000 / 60) % 60);
-            let s = Math.floor((timeInMilliseconds / 1000) % 60);
+            let m = Math.floor((timeInMilliseconds / 1000 / 60 / 60 - h) * 60);
+            let s = Math.floor(((timeInMilliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
 
             h = (h < 10) ? "0" + h : h;
             m = (m < 10) ? "0" + m : m;
@@ -40,16 +40,9 @@
         // Start the timer
         timerInterval = setInterval(updateTimer, 1000);
 
-        // Event listener for offline event
-        window.addEventListener('offline', () => {
-            clearInterval(timerInterval); // Stop the timer
-            elapsedTime = Date.now() - start + elapsedTime; // Save elapsed time
-        });
-
-        // Event listener for online event
-        window.addEventListener('online', () => {
-            start = Date.now() - elapsedTime; // Reset the start time
-            timerInterval = setInterval(updateTimer, 1000); // Resume the timer
+        // Event listener for beforeunload event
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('elapsedTime', Date.now() - start + elapsedTime); // Save elapsed time to local storage
         });
     </script>
 </body>
