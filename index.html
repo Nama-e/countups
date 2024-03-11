@@ -43,6 +43,7 @@
         // Event listener for beforeunload event
         window.addEventListener('beforeunload', () => {
             localStorage.setItem('elapsedTime', Date.now() - start + elapsedTime); // Save elapsed time to local storage
+            clearInterval(timerInterval); // Clear the timer interval
         });
     </script>
 </body>
