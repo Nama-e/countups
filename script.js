@@ -5,6 +5,7 @@ let intervalId;
 // Function to update the procrastination timer every second
 function updateProcrastinationTimer() {
     procrastinationTime++;
+    document.querySelector('.counter').innerText = "Procrastination Time: " + formatTime(procrastinationTime);
 }
 
 // Function to update the counter every second
@@ -17,7 +18,6 @@ function updateCounter() {
 function startCounter() {
     intervalId = setInterval(() => {
         updateProcrastinationTimer();
-        updateCounter();
     }, 1000);
 }
 
