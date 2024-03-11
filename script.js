@@ -5,20 +5,18 @@ let intervalId;
 // Function to update the procrastination timer every second
 function updateProcrastinationTimer() {
     procrastinationTime++;
-    document.querySelector('.counter').innerText = "Procrastination Time: " + formatTime(procrastinationTime);
+    updateCounter();
 }
 
 // Function to update the counter every second
 function updateCounter() {
     count++;
-    document.querySelector('.counter').innerText = formatTime(procrastinationTime + count);
+    document.querySelector('.counter').innerText = "Procrastination Time: " + formatTime(procrastinationTime + count);
 }
 
 // Function to start the counter
 function startCounter() {
-    intervalId = setInterval(() => {
-        updateProcrastinationTimer();
-    }, 1000);
+    intervalId = setInterval(updateProcrastinationTimer, 1000);
 }
 
 // Function to format time to HH:MM:SS
