@@ -3,32 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter</title>
+    <title>Offline Timer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 
-        body { 
-            background-color: #00ff00; 
-            font-family: 'Kdam Thmor Pro';
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+        body { background-color: #00ff00; }
         
-        .counter {
+        .stopwatch {
+            position: fixed;
             font-size: 48px;
+            font-family: 'Kdam Thmor Pro';
             color: white;
             text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="counter-container">
-        <div class="counter-label">Procrastination Time:</div>
-        <div class="counter">00:00:00</div>
-    </div>
-    <script src="script.js"></script>
+    <div class="stopwatch" />
+    <script>
+        let startTime = 0; // Variable to store the start time
+        let isRunning = false; // Flag to track whether the timer is running
+        let elapsedTime = 0; // Variable to store the elapsed time
+
+        // Function to start the timer
+        function startTimer() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime; // Set the start time based on the elapsed time
+                isRunning = true; // Set the flag to indicate that the timer is running
+                updateTimer(); // Update the timer display
+            }
+        }
+
+        // Function to stop the timer
+        function stopTimer() {
+            if (isRunning) {
+                elapsedTime = Date.now() - startTime; // Calculate the elapsed time
+                isRunning = false; // Set the flag to indicate that the timer is not running
+            }
+        }
+
+        // Function to update the timer display
+        function updateTimer() {
+            if (isRunning) {
+                const currentTime = Date.now(); // Get the current time
+                const deltaTime = currentTime - startTime; // Calculate the time difference
+                const seconds = Math.floor(deltaTime / 1000); // Convert milliseconds to seconds
+                const minutes = Math.floor(seconds / 60); // Calculate the minutes
+                const hours = Math.floor(minutes / 60); // Calculate the hours
+
+                // Format the time as HH:MM:SS
+                const formattedTime = `${pad(hours)}:${pad(minutes % 60)}:${pad(seconds % 60)}`;
+                
+                // Display the formatted time
+                document.querySelector('.stopwatch').innerHTML = formattedTime;
+
+                // Call updateTimer recursively every second
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        // Function to pad single-digit numbers with a leading zero
+        function pad(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // Start the timer initially
+        startTimer();
+    </script>
 </body>
 </html>
