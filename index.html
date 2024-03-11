@@ -19,41 +19,37 @@
 <body>
     <div class="stopwatch"></div>
     <script>
-        const initialStartTime = Date.now(); // Initial start time
-        let elapsedTime = 0; // Elapsed time when paused
-        let timerInterval; // Interval ID for the timer
+        let start = Date.now();
+        let elapsedTime = 0; // Variable to store elapsed time
+        let timerInterval; // Variable to store the interval ID
 
         // Function to update the timer display
         function updateTimer() {
-            const currentTime = Date.now();
-            const totalTime = currentTime - initialStartTime + elapsedTime;
+            const timeInMilliseconds = Date.now() - start + elapsedTime;
+            let h = Math.floor(timeInMilliseconds / 1000 / 60 / 60);
+            let m = Math.floor((timeInMilliseconds / 1000 / 60) % 60);
+            let s = Math.floor((timeInMilliseconds / 1000) % 60);
 
-            let hours = Math.floor(totalTime / (1000 * 60 * 60));
-            let minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
 
-            // Add leading zeros if necessary
-            hours = hours < 10 ? "0" + hours : hours;
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            // Display the time
-            document.querySelector('.stopwatch').innerText = `${hours}:${minutes}:${seconds}`;
+            document.querySelector('.stopwatch').innerHTML = `${h}:${m}:${s}`;
         }
 
         // Start the timer
         timerInterval = setInterval(updateTimer, 1000);
 
-        // Event listener for when the browser goes offline
+        // Event listener for offline event
         window.addEventListener('offline', () => {
             clearInterval(timerInterval); // Stop the timer
-            elapsedTime = Date.now() - initialStartTime; // Save the elapsed time
+            elapsedTime = Date.now() - start + elapsedTime; // Save elapsed time
         });
 
-        // Event listener for when the browser comes back online
+        // Event listener for online event
         window.addEventListener('online', () => {
-            initialStartTime = Date.now(); // Reset the initial start time
-            timerInterval = setInterval(updateTimer, 1000); // Restart the timer
+            start = Date.now() - elapsedTime; // Reset the start time
+            timerInterval = setInterval(updateTimer, 1000); // Resume the timer
         });
     </script>
 </body>
