@@ -56,8 +56,15 @@
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "https://api.twitch.tv/kraken/chat/LatteMeowCatto/messages", true);
             xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("Authorization", "oauth:luamph8zosreicyyyo0ho6ro9y5kxe");
+            xhr.setRequestHeader("Authorization", `OAuth ${getToken().oauth_token}`);
             xhr.send(JSON.stringify({ "content": message }));
+        }
+
+        function getToken() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "token.json", false);
+            xhr.send();
+            return JSON.parse(xhr.responseText);
         }
     </script>
 </body>
