@@ -9,8 +9,7 @@ function updateProcrastinationTimer() {
 
 // Function to update the counter every second
 function updateCounter() {
-    const counterElement = document.querySelector('.counter');
-    counterElement.innerText = "Procrastination Time: " + formatTime(procrastinationTime);
+    document.querySelector('.counter').innerText = "Procrastination Time: " + formatTime(procrastinationTime);
 }
 
 // Function to start the counter
