@@ -3,51 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lazy Latte Timer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Autography&display=swap" rel="stylesheet">
+    <title>Timer</title>
     <style>
-        body {
-            background-color: #00ff00;
-            font-family: 'Autography', cursive;
-        }
-        .timer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .timer-text {
-            font-size: 36px;
-            color: white;
-            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+        body { background-color: #00ff00; }
         .stopwatch {
+            position: fixed;
             font-size: 48px;
+            font-family: 'Kdam Thmor Pro';
             color: white;
-            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="timer-container">
-        <div class="timer-text">Lazy Latte Timer</div>
-        <div class="stopwatch"></div>
-    </div>
+    <div class="stopwatch"></div>
     <script>
+        let start = Date.now();
+        let elapsedTime = 0; // Variable to store elapsed time
+        let timerInterval; // Variable to store the interval ID
+
         // Function to update the timer display
         function updateTimer() {
-            const currentTime = new Date();
-            const midnight = new Date(currentTime);
-            midnight.setHours(0, 0, 0, 0); // Set time to 00:00:00
-
-            // Check if it's midnight
-            if (currentTime.getTime() === midnight.getTime()) {
-                // Reset the timer
-                start = Date.now();
-            }
-
-            const timeInMilliseconds = Date.now() - start;
+            const timeInMilliseconds = Date.now() - start + elapsedTime;
             let h = Math.floor(timeInMilliseconds / 1000 / 60 / 60);
             let m = Math.floor((timeInMilliseconds / 1000 / 60 / 60 - h) * 60);
             let s = Math.floor(((timeInMilliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
@@ -60,9 +38,19 @@
         }
 
         // Start the timer
-        let start = Date.now(); // Initial start time
-        updateTimer(); // Update timer initially
-        setInterval(updateTimer, 1000); // Update timer every second
+        timerInterval = setInterval(updateTimer, 1000);
+
+        // Event listener for offline event
+        window.addEventListener('offline', () => {
+            clearInterval(timerInterval); // Stop the timer
+            elapsedTime = Date.now() - start; // Save elapsed time
+        });
+
+        // Event listener for online event
+        window.addEventListener('online', () => {
+            start = Date.now() - elapsedTime; // Reset the start time
+            timerInterval = setInterval(updateTimer, 1000); // Resume the timer
+        });
     </script>
 </body>
 </html>
