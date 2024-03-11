@@ -6,63 +6,54 @@
     <title>Timer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
-
-        body { background-color: #ffffff; } /* Change background color to white */
-        
-        .timer {
+        body { background-color: #00ff00; }
+        .stopwatch {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-size: 48px;
             font-family: 'Kdam Thmor Pro';
-            color: black; /* Change text color to black */
-            border: 2px solid black; /* Add border */
-            padding: 10px; /* Add padding */
+            color: white;
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="timer"></div>
-
+    <div class="stopwatch"></div>
     <script>
-        let startTimestamp = Date.now();
-        let procrastinationTime = 0;
+        const initialStartTime = Date.now(); // Initial start time
+        let elapsedTime = 0; // Elapsed time when paused
+        let timerInterval; // Interval ID for the timer
 
-        // Function to update the timer every second
+        // Function to update the timer display
         function updateTimer() {
             const currentTime = Date.now();
-            const elapsedTime = currentTime - startTimestamp;
-            const totalSeconds = Math.floor(elapsedTime / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
+            const totalTime = currentTime - initialStartTime + elapsedTime;
 
-            const timerElement = document.querySelector('.timer');
-            timerElement.textContent = `Procrastination Time: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+            let hours = Math.floor(totalTime / (1000 * 60 * 60));
+            let minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
 
-            procrastinationTime = totalSeconds;
+            // Add leading zeros if necessary
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            // Display the time
+            document.querySelector('.stopwatch').innerText = `${hours}:${minutes}:${seconds}`;
         }
 
-        // Function to format time to two digits
-        function formatTime(time) {
-            return time < 10 ? `0${time}` : time;
-        }
+        // Start the timer
+        timerInterval = setInterval(updateTimer, 1000);
 
-        // Call updateTimer every second
-        const intervalId = setInterval(updateTimer, 1000);
-
-        // Stop and save the timer when the source goes offline
+        // Event listener for when the browser goes offline
         window.addEventListener('offline', () => {
-            clearInterval(intervalId);
-            console.log('Source is offline. Procrastination time saved:', procrastinationTime);
+            clearInterval(timerInterval); // Stop the timer
+            elapsedTime = Date.now() - initialStartTime; // Save the elapsed time
         });
 
-        // Resume the timer when the source comes back online
+        // Event listener for when the browser comes back online
         window.addEventListener('online', () => {
-            startTimestamp = Date.now() - (procrastinationTime * 1000);
-            intervalId = setInterval(updateTimer, 1000);
-            console.log('Source is back online.');
+            initialStartTime = Date.now(); // Reset the initial start time
+            timerInterval = setInterval(updateTimer, 1000); // Restart the timer
         });
     </script>
 </body>
