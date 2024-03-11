@@ -1,71 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
-        body { background-color: #00ff00; }
-        .stopwatch {
-            position: fixed;
-            font-size: 48px;
-            font-family: 'Kdam Thmor Pro';
-            color: white;
-            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Text</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="stopwatch"></div>
-    <button onclick="startStopwatch()">Start/Stop</button>
-    <button onclick="resetStopwatch()">Reset</button>
+    <div id="container">
+        <div id="text">Hello, World!</div>
+    </div>
 
-    <script>
-        const stopwatchElement = document.querySelector('.stopwatch');
-        let startTime;
-        let stopwatchInterval;
-
-        function startStopwatch() {
-            if (!startTime) {
-                startTime = Date.now();
-                stopwatchInterval = setInterval(updateStopwatch, 1000);
-            } else {
-                clearInterval(stopwatchInterval);
-                sendMessageToTwitchChat(`Final time: ${stopwatchElement.textContent}`);
-                startTime = null;
-            }
-        }
-
-        function resetStopwatch() {
-            clearInterval(stopwatchInterval);
-            startTime = null;
-            stopwatchElement.textContent = "00:00:00";
-        }
-
-        function updateStopwatch() {
-            const elapsedTime = Date.now() - startTime;
-            const hours = Math.floor(elapsedTime / 3600000);
-            const minutes = Math.floor((elapsedTime % 3600000) / 60000);
-            const seconds = Math.floor((elapsedTime % 60000) / 1000);
-            stopwatchElement.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-        }
-
-        function padZero(number) {
-            return (number < 10) ? `0${number}` : number;
-        }
-
-        function sendMessageToTwitchChat(message) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://api.twitch.tv/kraken/chat/LatteMeowCatto/messages", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("Authorization", `OAuth ${getToken().oauth_token}`);
-            xhr.send(JSON.stringify({ "content": message }));
-        }
-
-        function getToken() {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "token.json", false);
-            xhr.send();
-            return JSON.parse(xhr.responseText);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
