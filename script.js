@@ -1,5 +1,4 @@
 let procrastinationTime = 0; // Variable to store procrastination time in seconds
-let intervalId;
 
 // Function to update the procrastination timer every second
 function updateProcrastinationTimer() {
@@ -9,12 +8,8 @@ function updateProcrastinationTimer() {
 
 // Function to update the counter every second
 function updateCounter() {
-    document.querySelector('.counter').innerText = "Procrastination Time: " + formatTime(procrastinationTime);
-}
-
-// Function to start the counter
-function startCounter() {
-    intervalId = setInterval(updateProcrastinationTimer, 1000);
+    const counterElement = document.querySelector('.counter');
+    counterElement.innerText = "Procrastination Time: " + formatTime(procrastinationTime);
 }
 
 // Function to format time to HH:MM:SS
@@ -25,5 +20,8 @@ function formatTime(time) {
     return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 }
 
-// Call the startCounter function when the page loads
-document.addEventListener("DOMContentLoaded", startCounter);
+// Call the updateCounter function when the page loads
+document.addEventListener("DOMContentLoaded", updateCounter);
+
+// Call the updateProcrastinationTimer function to start the timer
+setInterval(updateProcrastinationTimer, 1000);
