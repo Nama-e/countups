@@ -3,72 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline Timer</title>
+    <title>Timer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 
-        body { background-color: #00ff00; }
+        body { background-color: #ffffff; } /* Change background color to white */
         
-        .stopwatch {
+        .timer {
             position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             font-size: 48px;
             font-family: 'Kdam Thmor Pro';
-            color: white;
-            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
+            color: black; /* Change text color to black */
+            border: 2px solid black; /* Add border */
+            padding: 10px; /* Add padding */
         }
     </style>
 </head>
 <body>
-    <div class="stopwatch" />
+    <div class="timer"></div>
+
     <script>
-        let startTime = 0; // Variable to store the start time
-        let isRunning = false; // Flag to track whether the timer is running
-        let elapsedTime = 0; // Variable to store the elapsed time
+        let startTimestamp = Date.now();
+        let procrastinationTime = 0;
 
-        // Function to start the timer
-        function startTimer() {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime; // Set the start time based on the elapsed time
-                isRunning = true; // Set the flag to indicate that the timer is running
-                updateTimer(); // Update the timer display
-            }
-        }
-
-        // Function to stop the timer
-        function stopTimer() {
-            if (isRunning) {
-                elapsedTime = Date.now() - startTime; // Calculate the elapsed time
-                isRunning = false; // Set the flag to indicate that the timer is not running
-            }
-        }
-
-        // Function to update the timer display
+        // Function to update the timer every second
         function updateTimer() {
-            if (isRunning) {
-                const currentTime = Date.now(); // Get the current time
-                const deltaTime = currentTime - startTime; // Calculate the time difference
-                const seconds = Math.floor(deltaTime / 1000); // Convert milliseconds to seconds
-                const minutes = Math.floor(seconds / 60); // Calculate the minutes
-                const hours = Math.floor(minutes / 60); // Calculate the hours
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - startTimestamp;
+            const totalSeconds = Math.floor(elapsedTime / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
 
-                // Format the time as HH:MM:SS
-                const formattedTime = `${pad(hours)}:${pad(minutes % 60)}:${pad(seconds % 60)}`;
-                
-                // Display the formatted time
-                document.querySelector('.stopwatch').innerHTML = formattedTime;
+            const timerElement = document.querySelector('.timer');
+            timerElement.textContent = `Procrastination Time: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
 
-                // Call updateTimer recursively every second
-                setTimeout(updateTimer, 1000);
-            }
+            procrastinationTime = totalSeconds;
         }
 
-        // Function to pad single-digit numbers with a leading zero
-        function pad(num) {
-            return num < 10 ? '0' + num : num;
+        // Function to format time to two digits
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
         }
 
-        // Start the timer initially
-        startTimer();
+        // Call updateTimer every second
+        const intervalId = setInterval(updateTimer, 1000);
+
+        // Stop and save the timer when the source goes offline
+        window.addEventListener('offline', () => {
+            clearInterval(intervalId);
+            console.log('Source is offline. Procrastination time saved:', procrastinationTime);
+        });
+
+        // Resume the timer when the source comes back online
+        window.addEventListener('online', () => {
+            startTimestamp = Date.now() - (procrastinationTime * 1000);
+            intervalId = setInterval(updateTimer, 1000);
+            console.log('Source is back online.');
+        });
     </script>
 </body>
 </html>
