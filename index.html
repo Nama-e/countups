@@ -35,8 +35,34 @@
         <div class="stopwatch"></div>
     </div>
     <script>
-        // JavaScript code for the timer functionality
-        // Add your JavaScript code here
+        // Function to update the timer display
+        function updateTimer() {
+            const currentTime = new Date();
+            const midnight = new Date(currentTime);
+            midnight.setHours(0, 0, 0, 0); // Set time to 00:00:00
+
+            // Check if it's midnight
+            if (currentTime.getTime() === midnight.getTime()) {
+                // Reset the timer
+                start = Date.now();
+            }
+
+            const timeInMilliseconds = Date.now() - start;
+            let h = Math.floor(timeInMilliseconds / 1000 / 60 / 60);
+            let m = Math.floor((timeInMilliseconds / 1000 / 60 / 60 - h) * 60);
+            let s = Math.floor(((timeInMilliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
+
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
+
+            document.querySelector('.stopwatch').innerHTML = `${h}:${m}:${s}`;
+        }
+
+        // Start the timer
+        let start = Date.now(); // Initial start time
+        updateTimer(); // Update timer initially
+        setInterval(updateTimer, 1000); // Update timer every second
     </script>
 </body>
 </html>
