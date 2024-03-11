@@ -9,7 +9,7 @@ function updateProcrastinationTimer() {
 // Function to update the counter every second
 function updateCounter() {
     const counterElement = document.querySelector('.counter');
-    counterElement.innerText = "Procrastination Time: " + formatTime(procrastinationTime);
+    counterElement.innerText = formatTime(procrastinationTime);
 }
 
 // Function to format time to HH:MM:SS
@@ -20,8 +20,8 @@ function formatTime(time) {
     return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 }
 
-// Call the updateCounter function when the page loads
-document.addEventListener("DOMContentLoaded", updateCounter);
+// Call the updateCounter function to display the initial counter value
+updateCounter();
 
 // Call the updateProcrastinationTimer function to start the timer
 setInterval(updateProcrastinationTimer, 1000);
