@@ -53,6 +53,7 @@
         // Event listener for click event
         document.addEventListener('click', () => {
             start = Date.now(); // Reset start time on click
+            updateTimer(); // Update timer display immediately
             localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
         });
 
@@ -63,23 +64,40 @@
             stopTimer(); // Clear the timer interval
         });
 
-        // Event listener for online event
-        window.addEventListener('online', () => {
-            start = Date.now();
-            startTimer();
-        });
+        // Function to restart timer at midnight
+        function restartAtMidnight() {
+            const currentTime = new Date();
+            const midnight = new Date(currentTime);
+            midnight.setHours(24, 0, 0, 0); // Set time to midnight
 
-        // Event listener for offline event
-        window.addEventListener('offline', () => {
-            stopTimer();
-        });
-
-        // Check browser online status on load
-        if (!navigator.onLine) {
-            stopTimer();
-        } else {
-            startTimer();
+            const timeUntilMidnight = midnight.getTime() - currentTime.getTime();
+            setTimeout(() => {
+                start = Date.now(); // Restart the timer at midnight
+                updateTimer(); // Update timer display immediately
+                restartAtMidnight(); // Schedule the next restart
+            }, timeUntilMidnight);
         }
+
+        // Call the function to restart timer at midnight
+        restartAtMidnight();
+
+        // Check if timer was running before page refresh
+        if (localStorage.getItem('elapsedTime')) {
+            const storedElapsedTime = parseInt(localStorage.getItem('elapsedTime'));
+            start -= storedElapsedTime; // Adjust start time
+            updateTimer(); // Update timer display
+            startTimer(); // Start the timer again
+        }
+
+        // Event listener for visibilitychange event (to handle if the tab is not visible)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                start = Date.now(); // Reset start time when tab becomes visible
+            } else {
+                const elapsedTime = Date.now() - start;
+                localStorage.setItem('elapsedTime', elapsedTime); // Save elapsed time to local storage when tab becomes hidden
+            }
+        });
     </script>
 </body>
 </html>
