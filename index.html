@@ -1,6 +1,3 @@
-Certainly! Here's the entire modified code:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +21,7 @@ Certainly! Here's the entire modified code:
     <script>
         let start = Date.now();
         let timerInterval; // Variable to store the interval ID
+        let elapsedTime = 0;
 
         // Function to update the timer display
         function updateTimer() {
@@ -44,7 +42,13 @@ Certainly! Here's the entire modified code:
         }
 
         // Start the timer
-        timerInterval = setInterval(updateTimer, 1000);
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
 
         // Event listener for click event
         document.addEventListener('click', () => {
@@ -56,11 +60,26 @@ Certainly! Here's the entire modified code:
         window.addEventListener('beforeunload', () => {
             const elapsedTime = Date.now() - start;
             localStorage.setItem('elapsedTime', elapsedTime); // Save elapsed time to local storage
-            clearInterval(timerInterval); // Clear the timer interval
+            stopTimer(); // Clear the timer interval
         });
+
+        // Event listener for online event
+        window.addEventListener('online', () => {
+            start = Date.now();
+            startTimer();
+        });
+
+        // Event listener for offline event
+        window.addEventListener('offline', () => {
+            stopTimer();
+        });
+
+        // Check browser online status on load
+        if (!navigator.onLine) {
+            stopTimer();
+        } else {
+            startTimer();
+        }
     </script>
 </body>
 </html>
-```
-
-This code will reset the timer every day at midnight and also when you click anywhere on the webpage.
