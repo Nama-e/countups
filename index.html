@@ -14,10 +14,20 @@
             color: white;
             text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
+        .restart-button {
+            margin-top: 60px;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="stopwatch"></div>
+    <button class="restart-button">Restart Timer</button>
     <script>
         let start = Date.now();
         let timerInterval; // Variable to store the interval ID
@@ -53,6 +63,13 @@
         // Event listener for click event
         document.addEventListener('click', () => {
             start = Date.now(); // Reset start time on click
+            updateTimer(); // Update timer display immediately
+            localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
+        });
+
+        // Event listener for restart button click event
+        document.querySelector('.restart-button').addEventListener('click', () => {
+            start = Date.now(); // Restart the timer to 0
             updateTimer(); // Update timer display immediately
             localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
         });
