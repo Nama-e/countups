@@ -14,10 +14,24 @@
             color: white;
             text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
+        .reset-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            font-family: 'Kdam Thmor Pro';
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="stopwatch"></div>
+    <button class="reset-button" onclick="resetTimer()">Reset Timer</button>
     <script>
         let start = Date.now();
         let elapsedTime = localStorage.getItem('elapsedTime') ? parseInt(localStorage.getItem('elapsedTime')) : 0; // Get elapsed time from local storage or default to 0
@@ -35,6 +49,13 @@
             s = (s < 10) ? "0" + s : s;
 
             document.querySelector('.stopwatch').innerHTML = `${h}:${m}:${s}`;
+        }
+
+        // Function to reset the timer
+        function resetTimer() {
+            start = Date.now();
+            elapsedTime = 0;
+            updateTimer();
         }
 
         // Start the timer
