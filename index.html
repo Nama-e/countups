@@ -14,35 +14,21 @@
             color: white;
             text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
-        .restart-button {
-            margin-top: 60px;
-            background-color: #fff;
-            color: #000;
-            border: 2px solid #000;
-            padding: 10px 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
     <div class="stopwatch"></div>
-    <button class="restart-button">Restart Timer</button>
     <script>
         let start = Date.now();
+        let elapsedTime = localStorage.getItem('elapsedTime') ? parseInt(localStorage.getItem('elapsedTime')) : 0; // Get elapsed time from local storage or default to 0
         let timerInterval; // Variable to store the interval ID
-        let elapsedTime = 0;
 
         // Function to update the timer display
         function updateTimer() {
-            const currentTime = new Date();
-            const midnight = new Date(currentTime);
-            midnight.setHours(24, 0, 0, 0); // Set time to midnight
-
-            const timeUntilMidnight = midnight.getTime() - currentTime.getTime();
-            let h = Math.floor(timeUntilMidnight / 1000 / 60 / 60);
-            let m = Math.floor((timeUntilMidnight / 1000 / 60 / 60 - h) * 60);
-            let s = Math.floor(((timeUntilMidnight / 1000 / 60 / 60 - h) * 60 - m) * 60);
+            const timeInMilliseconds = Date.now() - start + elapsedTime;
+            let h = Math.floor(timeInMilliseconds / 1000 / 60 / 60);
+            let m = Math.floor((timeInMilliseconds / 1000 / 60 / 60 - h) * 60);
+            let s = Math.floor(((timeInMilliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
 
             h = (h < 10) ? "0" + h : h;
             m = (m < 10) ? "0" + m : m;
@@ -52,69 +38,12 @@
         }
 
         // Start the timer
-        function startTimer() {
-            timerInterval = setInterval(updateTimer, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        // Event listener for click event
-        document.addEventListener('click', () => {
-            start = Date.now(); // Reset start time on click
-            updateTimer(); // Update timer display immediately
-            localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
-        });
-
-        // Event listener for restart button click event
-        document.querySelector('.restart-button').addEventListener('click', () => {
-            start = Date.now(); // Restart the timer to 0
-            elapsedTime = 0; // Reset elapsed time
-            updateTimer(); // Update timer display immediately
-            localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
-        });
+        timerInterval = setInterval(updateTimer, 1000);
 
         // Event listener for beforeunload event
         window.addEventListener('beforeunload', () => {
-            const elapsedTime = Date.now() - start;
-            localStorage.setItem('elapsedTime', elapsedTime); // Save elapsed time to local storage
-            stopTimer(); // Clear the timer interval
-        });
-
-        // Function to restart timer at midnight
-        function restartAtMidnight() {
-            const currentTime = new Date();
-            const midnight = new Date(currentTime);
-            midnight.setHours(24, 0, 0, 0); // Set time to midnight
-
-            const timeUntilMidnight = midnight.getTime() - currentTime.getTime();
-            setTimeout(() => {
-                start = Date.now(); // Restart the timer at midnight
-                updateTimer(); // Update timer display immediately
-                restartAtMidnight(); // Schedule the next restart
-            }, timeUntilMidnight);
-        }
-
-        // Call the function to restart timer at midnight
-        restartAtMidnight();
-
-        // Check if timer was running before page refresh
-        if (localStorage.getItem('elapsedTime')) {
-            const storedElapsedTime = parseInt(localStorage.getItem('elapsedTime'));
-            start -= storedElapsedTime; // Adjust start time
-            updateTimer(); // Update timer display
-            startTimer(); // Start the timer again
-        }
-
-        // Event listener for visibilitychange event (to handle if the tab is not visible)
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                start = Date.now(); // Reset start time when tab becomes visible
-            } else {
-                const elapsedTime = Date.now() - start;
-                localStorage.setItem('elapsedTime', elapsedTime); // Save elapsed time to local storage when tab becomes hidden
-            }
+            localStorage.setItem('elapsedTime', Date.now() - start + elapsedTime); // Save elapsed time to local storage
+            clearInterval(timerInterval); // Clear the timer interval
         });
     </script>
 </body>
