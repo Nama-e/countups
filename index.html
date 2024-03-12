@@ -70,6 +70,7 @@
         // Event listener for restart button click event
         document.querySelector('.restart-button').addEventListener('click', () => {
             start = Date.now(); // Restart the timer to 0
+            elapsedTime = 0; // Reset elapsed time
             updateTimer(); // Update timer display immediately
             localStorage.removeItem('elapsedTime'); // Remove elapsed time from local storage
         });
