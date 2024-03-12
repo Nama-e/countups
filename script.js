@@ -14,47 +14,38 @@
             color: white;
             text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5), 0px -2px 5px rgba(0, 0, 0, 0.5), -2px 0px 5px rgba(0, 0, 0, 0.5), 2px 0px 5px rgba(0, 0, 0, 0.5);
         }
+        .restart-button {
+            margin-top: 60px;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="stopwatch"></div>
+    <button class="restart-button">Restart Timer</button>
     <script>
-        const initialStartTime = Date.now(); // Initial start time
-        let elapsedTime = 0; // Elapsed time when paused
-        let timerInterval; // Interval ID for the timer
+        let start = Date.now();
+        let timerInterval; // Variable to store the interval ID
+        let elapsedTime = 0;
 
         // Function to update the timer display
         function updateTimer() {
-            const currentTime = Date.now();
-            const totalTime = currentTime - initialStartTime + elapsedTime;
+            const currentTime = new Date();
+            const midnight = new Date(currentTime);
+            midnight.setHours(24, 0, 0, 0); // Set time to midnight
 
-            let hours = Math.floor(totalTime / (1000 * 60 * 60));
-            let minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
+            const timeUntilMidnight = midnight.getTime() - currentTime.getTime();
+            let h = Math.floor(timeUntilMidnight / 1000 / 60 / 60);
+            let m = Math.floor((timeUntilMidnight / 1000 / 60 / 60 - h) * 60);
+            let s = Math.floor(((timeUntilMidnight / 1000 / 60 / 60 - h) * 60 - m) * 60);
 
-            // Add leading zeros if necessary
-            hours = hours < 10 ? "0" + hours : hours;
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
 
-            // Display the time
-            document.querySelector('.stopwatch').innerText = `${hours}:${minutes}:${seconds}`;
-        }
-
-        // Start the timer
-        timerInterval = setInterval(updateTimer, 1000);
-
-        // Event listener for when the browser goes offline
-        window.addEventListener('offline', () => {
-            clearInterval(timerInterval); // Stop the timer
-            elapsedTime = Date.now() - initialStartTime; // Save the elapsed time
-        });
-
-        // Event listener for when the browser comes back online
-        window.addEventListener('online', () => {
-            initialStartTime = Date.now(); // Reset the initial start time
-            timerInterval = setInterval(updateTimer, 1000); // Restart the timer
-        });
-    </script>
-</body>
-</html>
+            document.querySelector('.stopwatch').innerHTML = `${h}:
